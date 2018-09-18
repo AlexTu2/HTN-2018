@@ -5,13 +5,13 @@ import os
 import auth
 import decks
 
-from dotenv import load_env
+from dotenv import load_dotenv
 from flask import Flask
 from flask import request, Response
 
 app = Flask(__name__)
 
-load_env()
+load_dotenv()
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 
 

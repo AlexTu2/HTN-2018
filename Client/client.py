@@ -19,7 +19,6 @@ import io
 pygame.font.init()
 
 
-
 ################ Public Classes #########################
 # Deck class to allow for deck editing
 class Deck:

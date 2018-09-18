@@ -8,13 +8,16 @@ import os
 import pickle
 import socket
 import time
-import io
+import os
 
 import pygame
 import requests
 import threading
+import asyncio
+import io
 
 pygame.font.init()
+
 
 
 ################ Public Classes #########################
@@ -27,10 +30,11 @@ class Deck:
         self.card_pos = []
 
     def download_deck(self):
+        tasks = []
         for card in self.deck_list:
             has_img = card.img
-            if card.img is None:
-                threading.Thread(target=card.downloadIm).start()
+            if has_img is None:
+                asyncio.run(card.downloadIm())
                 
 
     def draw_deck(self, area, offset, click):
@@ -212,7 +216,7 @@ class Card:
             self.img = pygame.image.load("Card Name/" + self.cname + ".jpg").convert()
         card_DataB[self.cname]
 
-    def downloadIm(self):
+    async def downloadIm(self):
         if (self.img == None and self.imgUrl):
             image_url = self.imgUrl
             img_data = requests.get(image_url).content
@@ -300,15 +304,14 @@ def drawCard(cardname):
         curCard = card_database[cardname]
         image = curCard.img
         if not image:
-            threading.Thread(target=curCard.downloadIm).start()
-            image = curCard.img
+            asyncio.run(curCard.downloadIm())
 
         #In case it was no longer selected
         screen.blit(behind_card, (int(850 * size_ratio), int(150 * size_ratio)))
         transparent_rect(int(850 * size_ratio), int(150 * size_ratio), int(150 * size_ratio),
                                        int(303 * size_ratio), 90)
         
-        if image:
+        if curCard.img is not None:
             screen.blit(image, (int(883 * size_ratio), int(200 * size_ratio)))
 
         # Card Name
